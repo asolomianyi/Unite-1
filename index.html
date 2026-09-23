@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Grammar Presentation</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-slate: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-slate);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    nav {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.25rem;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-size: 0.875rem;
+    }
+
+    .nav-btn:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .nav-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .slide {
+      display: none;
+      background: var(--card-bg);
+      border-radius: 1rem;
+      padding: 2rem;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02);
+      border: 1px solid var(--border-color);
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-main);
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 0.75rem;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      margin: 1.5rem 0 1rem 0;
+      color: var(--primary);
+    }
+
+    .ukr-trans {
+      font-size: 0.9em;
+      color: var(--text-muted);
+      font-weight: normal;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+    }
+
+    .card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+    }
+
+    ul {
+      list-style-type: none;
+    }
+
+    li {
+      margin-bottom: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .example {
+      background: #eef2ff;
+      border-left: 4px solid var(--primary);
+      padding: 0.5rem 0.75rem;
+      margin-top: 0.3rem;
+      border-radius: 0 0.3rem 0.3rem 0;
+      font-style: italic;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem 0;
+    }
+
+    th, td {
+      border: 1px solid var(--border-color);
+      padding: 0.75rem;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+    }
+
+    .note-box {
+      background: #fffbeb;
+      border: 1px solid #fef3c7;
+      border-left: 4px solid #f59e0b;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .quiz-container {
+      margin-top: 2rem;
+      background: #f8fafc;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      border: 1px solid var(--border-color);
+    }
+
+    .quiz-question {
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .option-btn {
+      background: white;
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      background: #f1f5f9;
+    }
+
+    .option-btn.correct {
+      background: #d1fae5;
+      border-color: var(--accent-green);
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    .option-btn.wrong {
+      background: #fee2e2;
+      border-color: var(--accent-red);
+      color: #991b1b;
+    }
+
+    .feedback {
+      margin-top: 0.75rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .footer-nav {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .action-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .action-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .action-btn:disabled {
+      background: #cbd5e1;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 640px) {
+      header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">📚 Grammar Interactive</div>
+    <nav>
+      <button class="nav-btn active" onclick="goToSlide(0)">1. Present Tenses</button>
+      <button class="nav-btn" onclick="goToSlide(1)">2. Comparisons</button>
+      <button class="nav-btn" onclick="goToSlide(2)">3. Past Simple & Used to</button>
+      <button class="nav-btn" onclick="goToSlide(3)">4. Quantifiers</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- SLIDE 1 -->
+    <section class="slide active" id="slide-0">
+      <h1>Present Simple vs Present Continuous <span class="ukr-trans">(Теперішній простий проти Теперішнього тривалого)</span></h1>
+      
+      <h2>1. When to use? <span class="ukr-trans">(Коли використовувати?)</span></h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Present Simple</h3>
+          <ul>
+            <li>• <strong>Habits and routines</strong> <span class="ukr-trans">(Звички та щоденні дії)</span>
+              <div class="example">I play football every Sunday. <span class="ukr-trans">(Я граю у футбол щонеділі.)</span></div>
+            </li>
+            <li>• <strong>General truths and states</strong> <span class="ukr-trans">(Загальні факти та постійні стани)</span>
+              <div class="example">The Earth revolves around the Sun. <span class="ukr-trans">(Земля обертається навколо Сонця.)</span></div>
+            </li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Present Continuous</h3>
+          <ul>
+            <li>• <strong>Actions happening right now</strong> <span class="ukr-trans">(Дії, що відбуваються просто зараз)</span>
+              <div class="example">I am writing an email at the moment. <span class="ukr-trans">(Я пишу лист просто зараз.)</span></div>
+            </li>
+            <li>• <strong>Temporary situations</strong> <span class="ukr-trans">(Тимчасові ситуації)</span>
+              <div class="example">She is staying with her parents this week. <span class="ukr-trans">(Цього тижня вона живе з батьками.)</span></div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>2. Sentence Structures <span class="ukr-trans">(Формули утворення)</span></h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Type <span class="ukr-trans">(Тип)</span></th>
+            <th>Present Simple</th>
+            <th>Present Continuous</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong> Affirmative</strong> <span class="ukr-trans">(Стверджувальне)</span></td>
+            <td>Subject + Verb(s/es)<br><em>I work / He works</em></td>
+            <td>Subject + am/is/are + V-ing<br><em>I am working / He is working</em></td>
+          </tr>
+          <tr>
+            <td><strong> Negative</strong> <span class="ukr-trans">(Заперечне)</span></td>
+            <td>Subject + don't/doesn't + Verb<br><em>I don't work / He doesn't work</em></td>
+            <td>Subject + am not/isn't/aren't + V-ing<br><em>I'm not working / He isn't working</em></td>
+          </tr>
+          <tr>
+            <td><strong> Interrogative</strong> <span class="ukr-trans">(Питальне)</span></td>
+            <td>Do/Does + Subject + Verb?<br><em>Do you work? / Does he work?</em></td>
+            <td>Am/Is/Are + Subject + V-ing?<br><em>Are you working? / Is he working?</em></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note-box">
+        <strong>NOTE: STATIVE VERBS</strong> (see, like, love, hate, want, need, understand, know, etc.) are <strong>not usually used</strong> in the Present Continuous. <span class="ukr-trans">(Дієслова стану зазвичай не використовуються в Present Continuous.)</span>
+      </div>
+
+      <!-- Quiz -->
+      <div class="quiz-container">
+        <h3> Quick Check <span class="ukr-trans">(Швидка перевірка)</span></h3>
+        <p class="quiz-question" id="q1-text">1. Look! The train _________.</p>
+        <div class="quiz-options" id="q1-options">
+          <button class="option-btn" onclick="checkAnswer(this, false, 'q1-fb')">comes</button>
+          <button class="option-btn" onclick="checkAnswer(this, true, 'q1-fb')">is coming</button>
+        </div>
+        <div class="feedback" id="q1-fb"></div>
+      </div>
+
+      <div class="footer-nav">
+        <button class="action-btn" disabled>← Previous</button>
+        <button class="action-btn" onclick="goToSlide(1)">Next →</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 -->
+    <section class="slide" id="slide-1">
+      <h1>Comparison of Adjectives and Adverbs <span class="ukr-trans">(Порівняння прикметників та прислівників)</span></h1>
+
+      <h2>1. Comparative & Superlative <span class="ukr-trans">(Вищий та найвищий ступені)</span></h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Short Words <span class="ukr-trans">(Короткі слова)</span></h3>
+          <p>• <strong>Comparative (-er than):</strong> fast → faster than <span class="ukr-trans">(швидший, ніж)</span></p>
+          <p>• <strong>Superlative (the -est):</strong> fast → the fastest <span class="ukr-trans">(найшвидший)</span></p>
+          <div class="example">Henry can run <strong>faster than</strong> Keith.</div>
+        </div>
+        <div class="card">
+          <h3>Long Words <span class="ukr-trans">(Довгі слова)</span></h3>
+          <p>• <strong>Comparative (more ... than):</strong> difficult → more difficult than <span class="ukr-trans">(складніший, ніж)</span></p>
+          <p>• <strong>Superlative (the most ...):</strong> difficult → the most difficult <span class="ukr-trans">(найскладніший)</span></p>
+          <div class="example">Chemistry is <strong>more difficult than</strong> maths.</div>
+        </div>
+      </div>
+
+      <h2>2. Special Structures <span class="ukr-trans">(Спеціальні конструкції)</span></h2>
+      <div class="grid-2">
+        <div class="card">
+          <h3>(not) as ... as <span class="ukr-trans">(такий же ... як / не такий ... як)</span></h3>
+          <p>Used to show equality or inequality. <span class="ukr-trans">(Для показу рівності або нерівності.)</span></p>
+          <div class="example">I can draw <strong>as well as</strong> my sister.</div>
+          <div class="example">Pool <strong>isn't as boring as</strong> chess.</div>
+        </div>
+        <div class="card">
+          <h3>less ... than / the least <span class="ukr-trans">(менш ... ніж / найменш)</span></h3>
+          <p>Opposite of <i>more</i> and <i>most</i>. <span class="ukr-trans">(Протилежність до more та most.)</span></p>
+          <div class="example">History is <strong>less exciting than</strong> biology.</div>
+          <div class="example">Physics is <strong>the least exciting</strong> lesson of all.</div>
+        </div>
+      </div>
+
+      <!-- Quiz -->
+      <div class="quiz-container">
+        <h3> Quick Check <span class="ukr-trans">(Швидка перевірка)</span></h3>
+        <p class="quiz-question">2. Sally got _______ marks in biology.</p>
+        <div class="quiz-options">
+          <button class="option-btn" onclick="checkAnswer(this, false, 'q2-fb')">the better</button>
+          <button class="option-btn" onclick="checkAnswer(this, true, 'q2-fb')">the best</button>
+          <button class="option-btn" onclick="checkAnswer(this, false, 'q2-fb')">most good</button>
+        </div>
+        <div class="feedback" id="q2-fb"></div>
+      </div>
+
+      <div class="footer-nav">
+        <button class="action-btn" onclick="goToSlide(0)">← Previous</button>
+        <button class="action-btn" onclick="goToSlide(2)">Next →</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 -->
+    <section class="slide" id="slide-2">
+      <h1>Past Simple & The verb "used to" <span class="ukr-trans">(Минулий простий час та дієслово used to)</span></h1>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Past Simple</h3>
+          <p>Used for completed actions at a specific time in the past. <span class="ukr-trans">(Використовується для завершених дій у минулому.)</span></p>
+          <div class="example">A: <strong>Did you use</strong> my laptop last night?</div>
+          <div class="example">B: Yes, I <strong>wanted</strong> to send an email, but I <strong>sent</strong> a text message instead.</div>
+        </div>
+        <div class="card">
+          <h3>The verb "used to"</h3>
+          <p>Used for past habits or states that are no longer true today. <span class="ukr-trans">(Використовується для минулих звичок, яких більше немає.)</span></p>
+          <div class="example">In the past, people <strong>didn't use to communicate</strong> through social media so much.</div>
+          <div class="example">They <strong>used to call</strong> them or meet up.</div>
+        </div>
+      </div>
+
+      <h2>Formulas for "used to" <span class="ukr-trans">(Формули для "used to")</span></h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Structure</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>+ Affirmative</strong></td>
+            <td>Subject + <strong>used to</strong> + Verb</td>
+            <td>He <strong>used to play</strong> football.</td>
+          </tr>
+          <tr>
+            <td><strong>- Negative</strong></td>
+            <td>Subject + <strong>didn't use to</strong> + Verb</td>
+            <td>He <strong>didn't use to play</strong> football.</td>
+          </tr>
+          <tr>
+            <td><strong>? Interrogative</strong></td>
+            <td><strong>Did</strong> + Subject + <strong>use to</strong> + Verb?</td>
+            <td><strong>Did</strong> he <strong>use to play</strong> football?</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Quiz -->
+      <div class="quiz-container">
+        <h3> Quick Check <span class="ukr-trans">(Швидка перевірка)</span></h3>
+        <p class="quiz-question">3. In the past, people _________ so much time on phones.</p>
+        <div class="quiz-options">
+          <button class="option-btn" onclick="checkAnswer(this, false, 'q3-fb')">didn't used to spend</button>
+          <button class="option-btn" onclick="checkAnswer(this, true, 'q3-fb')">didn't use to spend</button>
+        </div>
+        <div class="feedback" id="q3-fb"></div>
+      </div>
+
+      <div class="footer-nav">
+        <button class="action-btn" onclick="goToSlide(1)">← Previous</button>
+        <button class="action-btn" onclick="goToSlide(3)">Next →</button>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 -->
+    <section class="slide" id="slide-3">
+      <h1>Some / Any / No / Every & Compounds <span class="ukr-trans">(Займенники та їхні похідні)</span></h1>
+
+      <h2>1. Basic Words <span class="ukr-trans">(Базові слова)</span></h2>
+      <div class="grid-2">
+        <div class="card">
+          <p>• <strong>Some:</strong> Affirmative sentences <span class="ukr-trans">(Стверджувальні)</span></p>
+          <div class="example">There are <strong>some</strong> paintings in the gallery.</div>
+          <p style="margin-top:0.5rem">• <strong>Any:</strong> Questions & Negatives <span class="ukr-trans">(Питання та заперечення)</span></p>
+          <div class="example">I couldn't find <strong>any</strong> nice shoes.</div>
+        </div>
+        <div class="card">
+          <p>• <strong>No:</strong> Negative meaning with positive verb <span class="ukr-trans">(Заперечний зміст)</span></p>
+          <div class="example">She left <strong>no</strong> telephone number.</div>
+          <p style="margin-top:0.5rem">• <strong>Every:</strong> All people/things <span class="ukr-trans">(Кожен, усі)</span></p>
+          <div class="example">He visited <strong>every</strong> country in Europe.</div>
+        </div>
+      </div>
+
+      <h2>2. Compounds Table <span class="ukr-trans">(Таблиця похідних слів)</span></h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Base</th>
+            <th>People (-body / -one)</th>
+            <th>Things (-thing)</th>
+            <th>Places (-where)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Some</strong></td>
+            <td>someone / somebody <span class="ukr-trans">(хтось)</span></td>
+            <td>something <span class="ukr-trans">(щось)</span></td>
+            <td>somewhere <span class="ukr-trans">(десь)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Any</strong></td>
+            <td>anyone / anybody <span class="ukr-trans">(хто-небудь)</span></td>
+            <td>anything <span class="ukr-trans">(що-небудь)</span></td>
+            <td>anywhere <span class="ukr-trans">(де-небудь)</span></td>
+          </tr>
+          <tr>
+            <td><strong>No</strong></td>
+            <td>nobody / no one <span class="ukr-trans">(ніхто)</span></td>
+            <td>nothing <span class="ukr-trans">(нічого)</span></td>
+            <td>nowhere <span class="ukr-trans">(ніде)</span></td>
+          </tr>
+          <tr>
+            <td><strong>Every</strong></td>
+            <td>everyone / everybody <span class="ukr-trans">(всі)</span></td>
+            <td>everything <span class="ukr-trans">(все)</span></td>
+            <td>everywhere <span class="ukr-trans">(всюди)</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Quiz -->
+      <div class="quiz-container">
+        <h3> Quick Check <span class="ukr-trans">(Швидка перевірка)</span></h3>
+        <p class="quiz-question">4. __________ knows where to find her. She left no phone number.</p>
+        <div class="quiz-options">
+          <button class="option-btn" onclick="checkAnswer(this, true, 'q4-fb')">Nobody</button>
+          <button class="option-btn" onclick="checkAnswer(this, false, 'q4-fb')">Anybody</button>
+          <button class="option-btn" onclick="checkAnswer(this, false, 'q4-fb')">Somebody</button>
+        </div>
+        <div class="feedback" id="q4-fb"></div>
+      </div>
+
+      <div class="footer-nav">
+        <button class="action-btn" onclick="goToSlide(2)">← Previous</button>
+        <button class="action-btn" disabled>Next →</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const navBtns = document.querySelectorAll('.nav-btn');
+
+    function goToSlide(index) {
+      slides[currentSlide].classList.remove('active');
+      navBtns[currentSlide].classList.remove('active');
+      
+      currentSlide = index;
+      
+      slides[currentSlide].classList.add('active');
+      navBtns[currentSlide].classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function checkAnswer(btn, isCorrect, feedbackId) {
+      const parent = btn.parentElement;
+      const buttons = parent.querySelectorAll('.option-btn');
+      const feedback = document.getElementById(feedbackId);
+
+      buttons.forEach(b => {
+        b.disabled = true;
+        b.classList.remove('correct', 'wrong');
+      });
+
+      if (isCorrect) {
+        btn.classList.add('correct');
+        feedback.innerText = "Правильно! Чудова робота.";
+        feedback.style.color = "#10b981";
+      } else {
+        btn.classList.add('wrong');
+        feedback.innerText = " Спробуйте ще раз або перегляньте правило вище.";
+        feedback.style.color = "#ef4444";
+      }
+    }
+  </script>
+</body>
+</html>
